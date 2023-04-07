@@ -1,0 +1,25 @@
+{
+  "name": "labecommerce-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+
+  "scripts": {
+    "start": "tsc && node ./build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/camilareimberg/labecommerce-backend.git"
+  },
+  "keywords": [],
+  "author": "Camila-Reimberg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/camilareimberg/labecommerce-backend/issues"
+  },
+  "homepage": "https://github.com/camilareimberg/labecommerce-backend#readme",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "typescript": "^5.0.3"
+  }
+}
