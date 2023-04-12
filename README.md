@@ -9,4 +9,8 @@ Aula 1 node e package j-son 27.02.2023
 02/03: Feedback aula Typescript I - deletei o arquivo par ou ímpar conforme pedia no exer. 1 - ok
 
 
-07/03: Feedback aula Typescript II - EXE. 1 OK
+07/03: Feedback aula Typescript II - OK
+
+14/03:  Feedback aula  APIs e Express - OK
+
+16/03:  Feedback aula  Aprofundamento Express - ex. 1 e 2 ok
