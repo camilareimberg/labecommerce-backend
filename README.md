@@ -13,4 +13,26 @@ Aula 1 node e package j-son 27.02.2023
 
 14/03:  Feedback aula  APIs e Express - OK
 
-16/03:  Feedback aula  Aprofundamento Express - ex. 1 e 2 ok
+16/03:  Feedback aula  Aprofundamento Express -OK
+
+21/03:  Feedback aula  Fluxo de dados Backend- 
+
+ex. 1 melhorar essa validação:
+Create Purchase
+
+id do usuário que fez a compra deve existir no array de usuários cadastrados
+id do produto que foi comprado deve existir no array de produtos cadastrados
+a quantidade e o total da compra devem estar com o cálculo correto
+ ex2. - OK
+
+ *********************Exercício 3*******************
+Documentar a API criada.
+API projeto Backend Labecommerce. Editar/deletar/criar/consultar usuários, produtos e compras
+
+LINK API PUBLICADA: https://documenter.getpostman.com/view/26335749/2s93Y5NzSY
+
+
+
+
+
+
