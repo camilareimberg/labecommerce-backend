@@ -31,6 +31,9 @@ API projeto Backend Labecommerce. Editar/deletar/criar/consultar usuários, prod
 
 LINK API PUBLICADA: https://documenter.getpostman.com/view/26335749/2s93Y5NzSY
 
+27/03:  Feedback aula  Introdução SQL- OK
+
+29/03:  Feedback aula  Aprofundamento SQL- OK
 
 
 
