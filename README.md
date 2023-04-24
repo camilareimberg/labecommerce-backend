@@ -1,5 +1,11 @@
 # labecommerce-backend
 
+Documentar a API criada.
+API projeto Backend Labecommerce. Editar/deletar/criar/consultar usuários, produtos e compras
+
+LINK API PUBLICADA: https://documenter.getpostman.com/view/26335749/2s93Y5NzSY
+
+
 Aula 1 node e package j-son 27.02.2023
  console.log("O app foi iniciado")
  console.log(process.argv[2])
@@ -42,4 +48,4 @@ LINK API PUBLICADA: https://documenter.getpostman.com/view/26335749/2s93Y5NzSY
 10/04: Feedback aula Introdução ao Knex - ex 1 e 2 OK
 ex. 3 Get User Purchases by User id não tá aparecendo o array
 
-12/04: Feedback aula Aprofundando em Knex - 
+12/04: Feedback aula Aprofundando em Knex - ex. 1 ok
