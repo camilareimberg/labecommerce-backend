@@ -1,5 +1,11 @@
 # labecommerce-backend
 
+Documentar a API criada.
+API projeto Backend Labecommerce. Editar/deletar/criar/consultar usuários, produtos e compras
+
+LINK API PUBLICADA: https://documenter.getpostman.com/view/26335749/2s93Y5NzSY
+
+
 Aula 1 node e package j-son 27.02.2023
  console.log("O app foi iniciado")
  console.log(process.argv[2])
