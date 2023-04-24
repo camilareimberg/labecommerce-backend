@@ -39,6 +39,7 @@ LINK API PUBLICADA: https://documenter.getpostman.com/view/26335749/2s93Y5NzSY
 
 05/04: Feedback aula Relações em SQL II - OK
 
-10/04: Feedback aula Introdução ao Knex - 
+10/04: Feedback aula Introdução ao Knex - ex 1 e 2 OK
+ex. 3 Get User Purchases by User id não tá aparecendo o array
 
 12/04: Feedback aula Aprofundando em Knex - 

@@ -3,6 +3,8 @@ import { CATEGORY, product, purchase, user } from "./types";
 import  express, { Request, Response} from 'express';
 import cors from 'cors';
 import { unsubscribe } from "diagnostics_channel";
+import { db } from "./database/knex";
+
 
 //método use faz as transformações do arquivo json
 const app = express()
@@ -13,14 +15,30 @@ app.listen(3003, () => {
     console.log("Servidor rodando na porta 3003");
 });
 
-app.get('/ping', (req: Request, res: Response) => {
-    res.send('Pong!')
-  });
+app.get("/ping", async (req: Request, res: Response) => {
+    try {
+        res.status(200).send({ message: "Pong!" })
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+})
+
 
 //Feedback APIs e Express - 14.03 ex. 2 - get all users - método get - rota users e repsosta é o array de usuários
-app.get('/users', (req: Request, res: Response)=> {
+app.get('/users', async (req: Request, res: Response)=> {
  try {
-     res.send(users)
+    const result = await db.raw(`SELECT * FROM users`);
+    res.status(200).send(result);
  }  
  catch(error: any) {
     console.log(error) 
@@ -29,9 +47,10 @@ app.get('/users', (req: Request, res: Response)=> {
 })
 
 //Feedback APIs e Express - 14.03 ex. 2 - get all products - método get - rota products e repsosta é o array de produtos
-app.get('/products', (req: Request, res: Response)=> {
+app.get('/products', async (req: Request, res: Response)=> {
     try {
-        res.send(products)
+        const result = await db.raw(`SELECT * FROM products`);
+        res.status(200).send(result);
     }  
     catch(error: any) {
        console.log(error) 
@@ -39,34 +58,49 @@ app.get('/products', (req: Request, res: Response)=> {
    }
    })
 
-app.get('/purchases', (req: Request, res: Response)=> {
-    res.send(purchases)
+   //get all purchases
+app.get('/purchases', async (req: Request, res: Response)=> {
+    try {
+        const result = await db.raw(`SELECT * FROM purchases`);
+        res.status(200).send(result);
+    }
+    catch(error: any) {
+        console.log(error) 
+        res.status(400).send(error.message)
+    }
 })
 
 
 //Feedback APIs e Express - 14.03 ex. 2 - Search Product by name req e res é o handler da função
-app.get('/products/search',(req: Request, res: Response)=> {
+app.get('/products/search', async (req: Request, res: Response)=> {
+    try {
     const q = req.query.q as string
-    //faz um filtro de produtos e cada elemento chamou de produto. Se a pessoa de fato madnou uma query, se o q é true então mostra todos os produtos q o nome inclui o q, se não, retorna o produto
+    //faz um filtro de produtos e cada elemento chamou de produto. Se a pessoa de fato mandou uma query, se o q é true então mostra todos os produtos q o nome inclui o q, se não, retorna o produto
 
     if (!q || q.length<1) {
         res.status(400).send("Opção de pesquisa inválida, tente novamente!")
         return;
     }
-    const filterProducts: product[] = products.filter((product)=>{
-        if(q) {
-                    return product.name.toLowerCase().includes(q.toLowerCase())
-        }
-        return product
-    })
-    res.status(200).send(filterProducts)
+    //cód antes do knex
+    // const filterProducts: product[] = products.filter((product)=>{
+    //     if(q) {
+    //                 return product.name.toLowerCase().includes(q.toLowerCase())
+    //     }
+    //     return product
+    // })
+
+const result = await db.raw(`SELECT * FROM products WHERE name= "${q}"`);
+    res.status(200).send(result)
+} catch (error) {
+res.send(error.message)
+}
 })
 
 //Feedback APIs e Express - 14.03 ex. 3 criar usuário 
-app.post('/users', (req: Request, res: Response)=> {
+app.post('/users', async (req: Request, res: Response)=> {
     try {
     const body = req.body
-    const{id, email, password} = body
+    const{id, email, name, password} = body
 
     if (id === undefined) {
         res.status(404);
@@ -90,14 +124,17 @@ app.post('/users', (req: Request, res: Response)=> {
         throw new Error("Senha deve contar no minimo 8 caracteres.");
       }
 
-    //cria o objeto com as infos que estamos recebendo do body
-    const newUser: user = {
-        id,
-        email,
-        password
-    }
+    //cria o objeto com as infos que estamos recebendo do body -  cód antes do knex
+    // const newUser: user = {
+    //     id,
+    //     email,
+    //     password
+    // }
+    // users.push(newUser)
 
-    users.push(newUser)
+    await db.raw (`INSERT INTO users (id, email, name, password)
+    VALUES ("${id}", "${email}","${name}","${password}")`);
+
     res.status(201).send("Cadastro realizado com sucesso")   
     }
 
@@ -108,10 +145,10 @@ app.post('/users', (req: Request, res: Response)=> {
 })
 
 //criando novo produto
-app.post('/products', (req: Request, res: Response)=> {
+app.post('/products', async (req: Request, res: Response)=> {
    try {
     const body = req.body
-    const{id, name, price, category} = body
+    const{id, name, price, category, image_url} = body
     //cria o objeto com as infos que estamos recebendo do body
     
     if (id === undefined) {
@@ -135,16 +172,20 @@ app.post('/products', (req: Request, res: Response)=> {
      if (productExists) {
          return res.status(400).send('Esse produto já está cadastrado!')
      }
-    
-    const newProduct: product = {
-        id,
-        name,
-        price,
-        category
-    }
-    products.push(newProduct)
-    res.status(201).send("Produto cadastrado com sucesso")
+    //cód antes do Knex
+    // const newProduct: product = {
+    //     id,
+    //     name,
+    //     price,
+    //     category
+    // }
+    // products.push(newProduct)
+    // res.status(201).send("Produto cadastrado com sucesso")
+    await db.raw(`INSERT INTO products (id, name, price, category, image_url)
+    VALUES ("${id}", "${name}","${price}","${category}", "${image_url}")`);
+    res.status(201).send("Produto cadastrado com sucesso") 
    } 
+
    catch(error: any) {
 	console.log(error) 
 	res.status(400).send(error.message)
@@ -152,39 +193,40 @@ app.post('/products', (req: Request, res: Response)=> {
 })
 
 //criando nova compra
-app.post('/purchases', (req: Request, res: Response)=> {
+app.post('/purchases', async (req: Request, res: Response)=> {
   
   try {
     const body = req.body
-    const{userId, productId, quantity, totalPrice} = body
+    const{id, total_price, paid, buyer_id} = body
    
-    if (userId === undefined) {
-        res.status(404);
-        throw new Error("Informe um Id de usuário válido");
-     }
-     if (productId === undefined) {
-        res.status(404);
-        throw new Error("IInforme um Id de produto válido");
-     }
-     if (quantity === undefined) {
-        res.status(404);
-        throw new Error("Informe a quantidade da compra")
-     }
-   
-     const purchaseExists = purchases.some(purchase => purchase.userId === userId)
-     if (purchaseExists) {
-         return res.status(400).send('Essa compra já foi realizada!')
-     }
+    if (!id || !buyer_id || !total_price) {
+        throw new Error("Dados invalidos.");
+      }
+  
+      await db.raw(`
+        INSERT INTO purchases(id, total_price, paid, buyer_id)
+        VALUES("${id}","${total_price}",${paid},${buyer_id})
+      `);
+      
+      res.status(201).send("Compra realizada com sucesso!");
+    //  if (id === undefined) {
+    //     res.status(404);
+    //     throw new Error("IInforme um Id de produto válido");
+    //  }
+    //  if (quantity === undefined) {
+    //     res.status(404);
+    //     throw new Error("Informe a quantidade da compra")
+    //  }
+    //cria o objeto com as infos que estamos recebendo do body - cód antes do Knex
+    // const newPurchase: purchase = {
+    //     userId,
+    //     productId,
+    //     quantity,
+    //     totalPrice
+    // }
+    // purchases.push(newPurchase)
+    // res.status(201).send("Compra realizada com sucesso")
 
-    //cria o objeto com as infos que estamos recebendo do body
-    const newPurchase: purchase = {
-        userId,
-        productId,
-        quantity,
-        totalPrice
-    }
-    purchases.push(newPurchase)
-    res.status(201).send("Compra realizada com sucesso")
 }
 catch(error: any) {
 	console.log(error) 
@@ -194,17 +236,28 @@ catch(error: any) {
 
 
 //Aprofundamento Express - 16.03 ex. 01 Get Products by id
-app.get('/products/:id',(req: Request, res: Response)=> {
-    const id = req.params.id 
+app.get('/products/:id', async (req: Request, res: Response)=> {
+    
     try{
-        const filterProductsById = products.find((productsId)=> {
-        return productsId.id ===id
-    })
-    if (filterProductsById) {
-        res.status(200).send(filterProductsById)    
-    }
-    throw new Error("Produto não existe. Digite um id de produto válido!");
-    }
+        const id = req.params.id 
+        const result = await db.raw(`SELECT * FROM products WHERE id = "${id}"`);
+
+
+        if (!result || result.length<1) {
+            res.status(400).send("Opção de pesquisa inválida, tente novamente!")
+        
+        } else {
+            res.status(200).send(result)
+}
+        //cód antes do knex
+    //     const filterProductsById = products.find((productsId)=> {
+    //     return productsId.id ===id
+    // })
+    // if (filterProductsById) {
+    //     res.status(200).send(filterProductsById)    
+    // }
+
+}
     catch(error: any) {
         console.log(error) 
         res.status(400).send(error.message)
@@ -214,15 +267,18 @@ app.get('/products/:id',(req: Request, res: Response)=> {
 
 
 //Aprofundamento Express - 16.03 ex. 01 Get User Purchases by User id
-app.get('/users/:id/purchases',(req: Request, res: Response)=> {
-    const userId = req.params.id 
+app.get('/users/:id/purchases', async (req: Request, res: Response)=> {
+    
     try{
-         const filterPurchaseById = purchases.find((purchasesId)=> purchasesId.userId === userId);
-       
-       if (filterPurchaseById) {
-        res.status(200).send(filterPurchaseById)
-    }
-    res.status(404).send("Usuário não existe. Digite um ID válido!");  
+        const id = req.params.id 
+        //cód antes do knex
+        //  const filterPurchaseById = purchases.find((purchasesId)=> purchasesId.userId === userId);
+       const result= await db.raw(`SELECT * FROM purchases WHERE id = "${id}"`);
+       if (result.length > 0){
+        res.status(200).send(`Array de compras encontrado: ${result}`)
+      } else {
+        throw new Error("Purchases not found.")
+      }
     }
     catch(error: any) {
         console.log(error) 
